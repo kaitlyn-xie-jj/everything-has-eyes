@@ -2,6 +2,12 @@
 
 A tiny, playful Chrome extension that gives buttons, links, images, and inputs googly eyes that follow your mouse.
 
+## Try it first
+
+The [live demo](https://kaitlyn-xie-jj.github.io/everything-has-eyes/) runs the **same `eyes.js` overlay** in a playful sample page, so you can try it before installing the extension. Click **Give everything eyes**, then move your mouse. The demo runs locally in the page with no tracking or backend.
+
+> The demo link works after GitHub Pages is enabled for `main` / `/ (root)` in repository settings.
+
 ## Install
 1. Open `chrome://extensions` and enable **Developer mode**.
 2. Click **Load unpacked** and select this repository's folder.
@@ -18,7 +24,7 @@ npm run check
 npm test
 ```
 
-GitHub Actions runs four regression tests (visibility filtering, pointer tracking, toggling/cleanup, 70-element cap, disconnected elements) and JavaScript/manifest syntax checks on every pull request.
+GitHub Actions runs the four overlay regression tests plus two static demo checks (visibility filtering, pointer tracking, toggling/cleanup, 70-element cap, disconnected elements) and JavaScript/manifest syntax checks on every pull request.
 
 A local headless Chromium smoke test also verified injection on a test webpage with four different element types, pupil movement, toggling off, and no page errors. The extension popup itself has not yet been verified by clicking the icon in a user's installed browser.
 
