@@ -10,7 +10,16 @@ A tiny, playful Chrome extension that gives buttons, links, images, and inputs g
 Works locally with no backend, analytics, or network calls. Chrome internal pages cannot be modified.
 
 ## Testing
-- Manifest and JavaScript syntax checked.
-- Automated real-browser interaction tests are pending due to browser environment restrictions.
+
+Requires Node.js 22+; no npm install is needed.
+
+```sh
+npm run check
+npm test
+```
+
+GitHub Actions runs four regression tests (visibility filtering, pointer tracking, toggling/cleanup, 70-element cap, disconnected elements) and JavaScript/manifest syntax checks on every pull request.
+
+A local headless Chromium smoke test also verified injection on a test webpage with four different element types, pupil movement, toggling off, and no page errors. The extension popup itself has not yet been verified by clicking the icon in a user's installed browser.
 
 MIT License.
