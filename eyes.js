@@ -1,1 +1,156 @@
-(()=>{const ID='tiny-eyes-overlay-v1';if(document.getElementById(ID)){document.getElementById(ID).remove();window.__tinyEyesCleanup?.();return}const overlay=document.createElement('div');overlay.id=ID;Object.assign(overlay.style,{position:'fixed',inset:'0',pointerEvents:'none',zIndex:'2147483647'});document.documentElement.appendChild(overlay);const eyes=[];const candidates=[...document.querySelectorAll('button,a,input,textarea,select,img,[role="button"]')].filter(el=>{const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return r.width>=35&&r.height>=18&&r.top<innerHeight&&r.left<innerWidth&&r.bottom>0&&r.right>0&&cs.visibility!=='hidden'&&cs.display!=='none'}).slice(0,70);function eye(){const outer=document.createElement('span');Object.assign(outer.style,{width:'16px',height:'16px',background:'white',border:'2px solid #222',borderRadius:'50%',display:'inline-block',position:'relative',boxSizing:'border-box'});const pupil=document.createElement('span');Object.assign(pupil.style,{width:'6px',height:'6px',background:'#222',borderRadius:'50%',position:'absolute',left:'3px',top:'3px'});outer.append(pupil);return {outer,pupil}}for(const el of candidates){const wrap=document.createElement('div');Object.assign(wrap.style,{position:'absolute',display:'flex',gap:'2px',transform:'translate(-50%,-50%)'});const a=eye(),b=eye();wrap.append(a.outer,b.outer);overlay.append(wrap);eyes.push({el,wrap,pupils:[a.pupil,b.pupil]})}let x=innerWidth/2,y=innerHeight/2,frame=0;const move=e=>{x=e.clientX;y=e.clientY};function update(){for(const obj of eyes){if(!obj.el.isConnected){obj.wrap.style.display='none';continue}const r=obj.el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight||r.right<0||r.left>innerWidth){obj.wrap.style.display='none';continue}obj.wrap.style.display='flex';const cx=Math.max(15,Math.min(innerWidth-15,r.left+r.width/2)),cy=Math.max(15,Math.min(innerHeight-15,r.top+Math.min(r.height*.35,18)));obj.wrap.style.left=cx+'px';obj.wrap.style.top=cy+'px';const dx=x-cx,dy=y-cy,len=Math.hypot(dx,dy)||1,dist=Math.min(3,len/40);for(const p of obj.pupils)p.style.transform='translate('+dx/len*dist+'px,'+dy/len*dist+'px)'}frame=requestAnimationFrame(update)}document.addEventListener('pointermove',move,{passive:true});update();window.__tinyEyesCleanup=()=>{cancelAnimationFrame(frame);document.removeEventListener('pointermove',move);delete window.__tinyEyesCleanup}})();
+(() => {
+  const ID = 'tiny-eyes-overlay-v1';
+  const existing = document.getElementById(ID);
+
+  // Clicking the extension icon again turns the eyes off.
+  if (existing) {
+    window.__tinyEyesCleanup?.();
+    existing.remove();
+    return;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = ID;
+  Object.assign(overlay.style, {
+    position: 'fixed',
+    inset: '0',
+    pointerEvents: 'none',
+    zIndex: '2147483647',
+  });
+  document.documentElement.appendChild(overlay);
+
+  const candidates = [
+    ...document.querySelectorAll('button,a,input,textarea,select,img,[role="button"]'),
+  ].filter((el) => {
+    const rect = el.getBoundingClientRect();
+    const style = getComputedStyle(el);
+    return (
+      rect.width >= 35 &&
+      rect.height >= 18 &&
+      rect.top < innerHeight &&
+      rect.left < innerWidth &&
+      rect.bottom > 0 &&
+      rect.right > 0 &&
+      style.visibility !== 'hidden' &&
+      style.display !== 'none'
+    );
+  }).slice(0, 70);
+
+  function makeEye() {
+    const outer = document.createElement('span');
+    Object.assign(outer.style, {
+      width: '16px',
+      height: '16px',
+      background: 'white',
+      border: '2px solid #222',
+      borderRadius: '50%',
+      display: 'inline-block',
+      position: 'relative',
+      boxSizing: 'border-box',
+    });
+    const pupil = document.createElement('span');
+    Object.assign(pupil.style, {
+      width: '6px',
+      height: '6px',
+      background: '#222',
+      borderRadius: '50%',
+      position: 'absolute',
+      left: '3px',
+      top: '3px',
+    });
+    outer.append(pupil);
+    return { outer, pupil };
+  }
+
+  const eyes = [];
+  for (const el of candidates) {
+    const wrap = document.createElement('div');
+    Object.assign(wrap.style, {
+      position: 'absolute',
+      display: 'flex',
+      gap: '2px',
+      transform: 'translate(-50%,-50%)',
+    });
+    const left = makeEye();
+    const right = makeEye();
+    wrap.append(left.outer, right.outer);
+    overlay.append(wrap);
+    eyes.push({ el, wrap, pupils: [left.pupil, right.pupil] });
+  }
+
+  let mouseX = innerWidth / 2;
+  let mouseY = innerHeight / 2;
+  let frame = 0;
+
+  function update() {
+    frame = 0;
+    if (document.hidden) return;
+
+    for (const item of eyes) {
+      if (!item.el.isConnected) {
+        item.wrap.style.display = 'none';
+        continue;
+      }
+      const rect = item.el.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > innerHeight ||
+          rect.right < 0 || rect.left > innerWidth) {
+        item.wrap.style.display = 'none';
+        continue;
+      }
+      item.wrap.style.display = 'flex';
+
+      const cx = Math.max(15, Math.min(innerWidth - 15, rect.left + rect.width / 2));
+      const cy = Math.max(15, Math.min(innerHeight - 15,
+        rect.top + Math.min(rect.height * 0.35, 18)));
+      item.wrap.style.left = cx + 'px';
+      item.wrap.style.top = cy + 'px';
+
+      const dx = mouseX - cx;
+      const dy = mouseY - cy;
+      const length = Math.hypot(dx, dy) || 1;
+      const distance = Math.min(3, length / 40);
+      for (const pupil of item.pupils) {
+        pupil.style.transform = 'translate(' +
+          dx / length * distance + 'px,' + dy / length * distance + 'px)';
+      }
+    }
+  }
+
+  // One frame per burst of interaction, instead of reading every target's
+  // layout on every animation frame indefinitely.
+  function schedule() {
+    if (!frame && !document.hidden) {
+      frame = requestAnimationFrame(update);
+    }
+  }
+
+  const onPointerMove = (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+    schedule();
+  };
+  const onVisibilityChange = () => {
+    if (document.hidden) {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    } else {
+      schedule();
+    }
+  };
+
+  document.addEventListener('pointermove', onPointerMove, { passive: true });
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  // Capture scroll events from nested containers as well as the document.
+  window.addEventListener('scroll', schedule, true);
+  window.addEventListener('resize', schedule);
+  schedule();
+
+  window.__tinyEyesCleanup = () => {
+    if (frame) cancelAnimationFrame(frame);
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.removeEventListener('scroll', schedule, true);
+    window.removeEventListener('resize', schedule);
+    delete window.__tinyEyesCleanup;
+  };
+})();
