@@ -1,1 +1,112 @@
-(()=>{const ID='tiny-eyes-overlay-v1';if(document.getElementById(ID)){document.getElementById(ID).remove();window.__tinyEyesCleanup?.();return}const overlay=document.createElement('div');overlay.id=ID;Object.assign(overlay.style,{position:'fixed',inset:'0',pointerEvents:'none',zIndex:'2147483647'});document.documentElement.appendChild(overlay);const eyes=[];const candidates=[...document.querySelectorAll('button,a,input,textarea,select,img,[role="button"]')].filter(el=>{const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return r.width>=35&&r.height>=18&&r.top<innerHeight&&r.left<innerWidth&&r.bottom>0&&r.right>0&&cs.visibility!=='hidden'&&cs.display!=='none'}).slice(0,70);function eye(){const outer=document.createElement('span');Object.assign(outer.style,{width:'16px',height:'16px',background:'white',border:'2px solid #222',borderRadius:'50%',display:'inline-block',position:'relative',boxSizing:'border-box'});const pupil=document.createElement('span');Object.assign(pupil.style,{width:'6px',height:'6px',background:'#222',borderRadius:'50%',position:'absolute',left:'3px',top:'3px'});outer.append(pupil);return {outer,pupil}}for(const el of candidates){const wrap=document.createElement('div');Object.assign(wrap.style,{position:'absolute',display:'flex',gap:'2px',transform:'translate(-50%,-50%)'});const a=eye(),b=eye();wrap.append(a.outer,b.outer);overlay.append(wrap);eyes.push({el,wrap,pupils:[a.pupil,b.pupil]})}let x=innerWidth/2,y=innerHeight/2,frame=0;const move=e=>{x=e.clientX;y=e.clientY};function update(){for(const obj of eyes){if(!obj.el.isConnected){obj.wrap.style.display='none';continue}const r=obj.el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight||r.right<0||r.left>innerWidth){obj.wrap.style.display='none';continue}obj.wrap.style.display='flex';const cx=Math.max(15,Math.min(innerWidth-15,r.left+r.width/2)),cy=Math.max(15,Math.min(innerHeight-15,r.top+Math.min(r.height*.35,18)));obj.wrap.style.left=cx+'px';obj.wrap.style.top=cy+'px';const dx=x-cx,dy=y-cy,len=Math.hypot(dx,dy)||1,dist=Math.min(3,len/40);for(const p of obj.pupils)p.style.transform='translate('+dx/len*dist+'px,'+dy/len*dist+'px)'}frame=requestAnimationFrame(update)}document.addEventListener('pointermove',move,{passive:true});update();window.__tinyEyesCleanup=()=>{cancelAnimationFrame(frame);document.removeEventListener('pointermove',move);delete window.__tinyEyesCleanup}})();
+(() => {
+  const ID = 'tiny-eyes-overlay-v1';
+  const existing = document.getElementById(ID);
+  if (existing) {
+    existing.remove();
+    window.__tinyEyesCleanup?.();
+    return;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.id = ID;
+  Object.assign(overlay.style, {
+    position: 'fixed', inset: '0', pointerEvents: 'none', zIndex: '2147483647'
+  });
+  document.documentElement.appendChild(overlay);
+
+  // On the demo page, turn whole cards into characters. Else use common controls.
+  const demoTargets = [...document.querySelectorAll('[data-eyes-target]')];
+  const pool = demoTargets.length ? demoTargets :
+    [...document.querySelectorAll('button, a, input, textarea, select, img, [role="button"]')];
+  const candidates = pool.filter((el) => {
+    const r = el.getBoundingClientRect();
+    const style = getComputedStyle(el);
+    return r.width >= 35 && r.height >= 18 &&
+      r.top < innerHeight && r.left < innerWidth &&
+      r.bottom > 0 && r.right > 0 &&
+      style.visibility !== 'hidden' && style.display !== 'none';
+  }).slice(0, 70);
+
+  const items = [];
+  function makeEye(size) {
+    const outer = document.createElement('span');
+    const pupil = document.createElement('span');
+    const diameter = Math.round(size * 0.37);
+    Object.assign(outer.style, {
+      width: size + 'px', height: size + 'px', display: 'inline-block',
+      boxSizing: 'border-box', position: 'relative', background: '#fff',
+      border: Math.max(2, Math.round(size * .09)) + 'px solid #29243c',
+      borderRadius: '50%', boxShadow: '1px 4px 0 #29243c22'
+    });
+    Object.assign(pupil.style, {
+      position: 'absolute', left: '50%', top: '50%',
+      width: diameter + 'px', height: diameter + 'px', borderRadius: '50%',
+      background: '#29243c', transform: 'translate(-50%, -50%)',
+      willChange: 'transform'
+    });
+    outer.appendChild(pupil);
+    return { outer, pupil };
+  }
+
+  for (const el of candidates) {
+    const box = el.getBoundingClientRect();
+    const big = el.hasAttribute('data-eyes-target');
+    const size = big ? Math.min(52, Math.max(32, box.width * .14)) :
+      Math.min(32, Math.max(19, box.width * .13));
+    const wrap = document.createElement('div');
+    Object.assign(wrap.style, {
+      position: 'absolute', display: 'flex', alignItems: 'center',
+      gap: Math.round(size * .16) + 'px',
+      transform: 'translate(-50%, -50%)', filter: 'drop-shadow(0 3px 2px #00000014)',
+      transition: 'filter 180ms'
+    });
+    const a = makeEye(size), b = makeEye(size);
+    wrap.append(a.outer, b.outer);
+    overlay.appendChild(wrap);
+    items.push({ el, wrap, pupils: [a.pupil, b.pupil], size, big });
+  }
+
+  let mouseX = innerWidth / 2;
+  let mouseY = innerHeight / 2;
+  let frame = 0;
+  const onMove = (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+  };
+
+  function animate() {
+    for (const item of items) {
+      if (!item.el.isConnected) { item.wrap.style.display = 'none'; continue; }
+      const r = item.el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) {
+        item.wrap.style.display = 'none';
+        continue;
+      }
+      item.wrap.style.display = 'flex';
+      const cx = Math.max(item.size, Math.min(innerWidth - item.size, r.left + r.width / 2));
+      const cy = Math.max(item.size, Math.min(innerHeight - item.size,
+        r.top + (item.big ? Math.min(r.height * .40, 116) : Math.min(r.height * .30, 22))));
+      item.wrap.style.left = cx + 'px';
+      item.wrap.style.top = cy + 'px';
+      const dx = mouseX - cx, dy = mouseY - cy;
+      const distance = Math.hypot(dx, dy) || 1;
+      const reach = item.size * .18;
+      const offset = Math.min(reach, distance / 22);
+      for (const pupil of item.pupils) {
+        pupil.style.transform = 'translate(calc(-50% + ' + (dx / distance * offset) +
+          'px), calc(-50% + ' + (dy / distance * offset) + 'px))';
+      }
+      item.wrap.style.filter = distance < 190 ?
+        'drop-shadow(0 4px 2px #00000022)' : 'drop-shadow(0 3px 2px #00000014)';
+    }
+    frame = requestAnimationFrame(animate);
+  }
+
+  document.addEventListener('pointermove', onMove, { passive: true });
+  animate();
+  window.__tinyEyesCleanup = () => {
+    cancelAnimationFrame(frame);
+    document.removeEventListener('pointermove', onMove);
+    delete window.__tinyEyesCleanup;
+  };
+})();
