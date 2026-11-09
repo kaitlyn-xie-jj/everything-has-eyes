@@ -6,7 +6,7 @@ A tiny, playful Chrome extension that gives buttons, links, images, and inputs g
 
 The [live demo](https://kaitlyn-xie-jj.github.io/everything-has-eyes/) runs the **same `eyes.js` overlay** in a playful sample page, so you can try it before installing the extension. Click **Give everything eyes**, then move your mouse. The demo runs locally in the page with no tracking or backend.
 
-> The demo link works after GitHub Pages is enabled for `main` / `/ (root)` in repository settings.
+**Deployment status:** The demo source is committed, and [the Pages deployment workflow](.github/workflows/deploy-demo.yml) now publishes `index.html` and `eyes.js` on pushes to `main`. If the link returns 404, the site is **not deployed yet**. Repository owner: open [Settings → Pages](https://github.com/kaitlyn-xie-jj/everything-has-eyes/settings/pages), set **Build and deployment → Source → GitHub Actions**, then check [Actions](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/deploy-demo.yml) for a successful deploy. A source file existing on `main` does *not* automatically mean the Pages site is live.
 
 ## Install
 1. Open `chrome://extensions` and enable **Developer mode**.
