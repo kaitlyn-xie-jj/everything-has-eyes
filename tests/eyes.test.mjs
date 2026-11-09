@@ -38,7 +38,8 @@ function fixture(targets, random = () => 0.25){
   };
   const window={};
   const context={
-    document,window,innerWidth:800,innerHeight:600,\n    Date: { now: () => now }, Math: Object.assign(Object.create(Math), { random }),
+    document,window,innerWidth:800,innerHeight:600,
+    Date: { now: () => now }, Math: Object.assign(Object.create(Math), { random }),
     getComputedStyle:el=>el.computedStyle,
     requestAnimationFrame(fn){const id=++frameId;frames.set(id,fn);return id;},
     cancelAnimationFrame(id){cancelled.push(id);frames.delete(id);},
