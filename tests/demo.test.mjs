@@ -11,8 +11,8 @@ test('demo is standalone, accessible, and loads the existing overlay', () => {
   assert.match(html, /id="eyes-status"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(html, /script\.src = 'eyes\.js';/);
   assert.match(html, /tiny-eyes-overlay-v1/);
-  assert.match(html, /<img class="face-img"/);
-  assert.match(html, /type="text" aria-label="Test googly-eyes input"/);
+  assert.match(html, /data-eyes-target/);
+  assert.match(html, /type="text" aria-label="Test input"/);
   assert.doesNotMatch(html, /<script[^>]*src="https?:/);
 });
 
