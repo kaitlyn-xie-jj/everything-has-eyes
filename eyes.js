@@ -36,7 +36,8 @@
       width: size + 'px', height: size + 'px', display: 'inline-block',
       boxSizing: 'border-box', position: 'relative', background: '#fff',
       border: Math.max(2, Math.round(size * .09)) + 'px solid #29243c',
-      borderRadius: '50%', boxShadow: '1px 4px 0 #29243c22'
+      borderRadius: '50%', boxShadow: '1px 4px 0 #29243c22',
+      overflow: 'hidden', transformOrigin: 'center center', willChange: 'transform'
     });
     Object.assign(pupil.style, {
       position: 'absolute', left: '50%', top: '50%',
