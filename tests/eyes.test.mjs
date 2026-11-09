@@ -111,12 +111,12 @@ test('characters blink independently, smoothly and reopen', () => {
   assert.equal(second.style.transform, 'scaleY(1.000)');
   f.advance(75);
   f.animate();
-  const midway = Number(first.style.transform.match(/scaleY\\(([^)]+)\\)/)[1]);
+  const midway = Number(first.style.transform.match(/scaleY\(([^)]+)\)/)[1]);
   assert.ok(midway > 0.22 && midway < 1, 'eyelid is part-way closed');
   assert.equal(second.style.transform, 'scaleY(1.000)', 'other character does not blink in sync');
   f.advance(90);
   f.animate();
-  const closed = Number(first.style.transform.match(/scaleY\\(([^)]+)\\)/)[1]);
+  const closed = Number(first.style.transform.match(/scaleY\(([^)]+)\)/)[1]);
   assert.ok(closed <= midway, 'eyelid moves smoothly towards closing');
   f.advance(220);
   f.animate();
