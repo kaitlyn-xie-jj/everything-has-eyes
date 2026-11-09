@@ -25,7 +25,7 @@
     .status { margin: 18px auto 0; font-size: 14px; min-height: 22px; }
     .gallery { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; align-items: stretch; }
     .tile { min-height: 290px; border: 3px solid var(--border); border-radius: 24px; padding: 26px 20px; text-align: center; box-shadow: 6px 6px 0 var(--border); }
-    .tile h2 { font-size: 17px; margin: 7px 0 8px; }
+    .character-space { height: 137px; position: relative; }\n    .character-smile { position: absolute; top: 117px; left: calc(50% - 19px); width: 38px; height: 19px; border-bottom: 5px solid #29243c; border-radius: 0 0 50% 50%; }\n    .tile h2 { font-size: 17px; margin: 7px 0 8px; }
     .tile p { line-height: 1.5; font-size: 14px; margin: 0 0 18px; }
     .tile.one { background: #e9dfff; } .tile.two { background: #fce8a8; } .tile.three { background: #b9e9ee; }
     .face-img { display: block; width: 104px; height: 104px; margin: 9px auto 20px; border-radius: 24px; }
@@ -48,24 +48,25 @@
         <h1>The internet is looking at you.</h1>
         <p>Give buttons, links, pictures and inputs a pair of googly eyes. Move your pointer. They're watching.</p>
         <button class="main-action" id="eyes-toggle" type="button" aria-pressed="false">Give everything eyes 👀</button>
-        <div class="status" id="eyes-status" role="status" aria-live="polite">Try the button, then move your mouse around.</div>
+        <div class="status" id="eyes-status" role="status" aria-live="polite">Press the button to wake up the little characters.</div>
       </section>
-      <section class="gallery" aria-label="Things that will grow googly eyes">
-        <article class="tile one">
-          <img class="face-img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%22180%22%20viewBox%3D%220%200%20180%20180%22%3E%3Crect%20width%3D%22180%22%20height%3D%22180%22%20rx%3D%2238%22%20fill%3D%22%23D6D8FF%22%2F%3E%3Cpath%20d%3D%22M24%20126%20Q90%20166%20156%20126%22%20fill%3D%22none%22%20stroke%3D%22%2334304F%22%20stroke-width%3D%2213%22%20stroke-linecap%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2265%22%20r%3D%2213%22%20fill%3D%22%2334304F%22%2F%3E%3Ccircle%20cx%3D%22119%22%20cy%3D%2265%22%20r%3D%2213%22%20fill%3D%22%2334304F%22%2F%3E%3Ccircle%20cx%3D%2255%22%20cy%3D%2259%22%20r%3D%224%22%20fill%3D%22white%22%2F%3E%3Ccircle%20cx%3D%22114%22%20cy%3D%2259%22%20r%3D%224%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="Smiling lilac square">
-          <h2>Even pictures</h2>
-          <p>Nothing is safe from tiny staring eyes.</p>
+      <section class="gallery" aria-label="Meet the googly-eyed characters">
+        <article class="tile one" data-eyes-target>
+          <div class="character-space"><div class="character-smile"></div></div>
+          <h2>The shy card</h2>
+          <p>It follows your cursor everywhere.</p>
         </article>
-        <article class="tile two">
-          <h2>Suspiciously ordinary button</h2>
-          <p>It definitely won't stare back at you.</p>
-          <button class="sample-button" type="button" id="ordinary-button">Press me</button>
+        <article class="tile two" data-eyes-target>
+          <div class="character-space"><div class="character-smile"></div></div>
+          <h2>The curious button</h2>
+          <p>It is looking right at you.</p>
+          <button class="sample-button" type="button" id="ordinary-button">Boop me!</button>
         </article>
-        <article class="tile three">
-          <h2>Your text box, too</h2>
-          <p>Whatever you type stays in this browser.</p>
-          <input class="sample-input" type="text" aria-label="Test googly-eyes input" placeholder="Hello there...">
-          <p><a class="sample-link" href="https://github.com/kaitlyn-xie-jj/everything-has-eyes">Meet the code</a></p>
+        <article class="tile three" data-eyes-target>
+          <div class="character-space"><div class="character-smile"></div></div>
+          <h2>The secret keeper</h2>
+          <p>It knows what you typed.</p>
+          <input class="sample-input" type="text" aria-label="Test input" placeholder="Say hi...">
         </article>
       </section>
       <p class="fine">This is the real extension overlay running on a sample page. No downloads, logins, tracking, or server calls.<br>
@@ -77,13 +78,13 @@
     const status = document.getElementById('eyes-status');
     toggle.addEventListener('click', () => {
       const script = document.createElement('script');
-      script.src = 'eyes.js';
+      script.src = 'eyes.js?v=2';
       script.addEventListener('load', () => {
         script.remove();
         const active = Boolean(document.getElementById('tiny-eyes-overlay-v1'));
         toggle.setAttribute('aria-pressed', String(active));
         toggle.textContent = active ? 'Take the eyes away 🙈' : 'Give everything eyes 👀';
-        status.textContent = active ? 'They're watching. Move your mouse!' : 'All clear. Click again to bring them back.';
+        status.textContent = active ? 'Meet your new googly-eyed friends! Move your mouse.' : 'All clear. Click again to bring them back.';
       }, { once: true });
       script.addEventListener('error', () => {
         script.remove();
@@ -92,7 +93,7 @@
       document.body.appendChild(script);
     });
     document.getElementById('ordinary-button').addEventListener('click', event => {
-      event.currentTarget.textContent = event.currentTarget.textContent === 'Press me' ? 'Boop!' : 'Press me';
+      event.currentTarget.textContent = event.currentTarget.textContent === 'Boop me!' ? 'Booped! ✨' : 'Boop me!';
     });
   </script>
 </body>
