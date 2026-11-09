@@ -67,7 +67,7 @@
     items.push({
       el, wrap, pupils: [a.pupil, b.pupil], whites: [a.outer, b.outer],
       size, big, nextBlink: Date.now() + 3000 + Math.random() * 5500,
-      blinkStart: -1, blinkDuration: 340
+      blinkStart: -1, blinkDuration: 340, gazeX: 0, gazeY: 0
     });
   }
 
@@ -119,9 +119,27 @@
       const distance = Math.hypot(dx, dy) || 1;
       const reach = item.size * .18;
       const offset = Math.min(reach, distance / 22);
+
+      // Shy mode: as a pointer comes very close, the character gently
+      // looks away instead of staring directly at it. Blend at the edge
+      // of the personal-space bubble to avoid sudden eye movements.
+      const shyRadius = item.big ? 150 : 95;
+      const shyInner = item.big ? 65 : 38;
+      const proximity = Math.max(0, Math.min(1,
+        (shyRadius - distance) / (shyRadius - shyInner)));
+      const shy = proximity * proximity * (3 - 2 * proximity);
+      const lookX = dx / distance * offset;
+      const lookY = dy / distance * offset;
+      const targetX = lookX * (1 - shy) - dx / distance * reach * .8 * shy;
+      const targetY = lookY * (1 - shy) +
+        (-dy / distance * reach * .45 + reach * .2) * shy;
+
+      // A damped glance gives shy eyes a soft, slightly hesitant motion.
+      item.gazeX += (targetX - item.gazeX) * .14;
+      item.gazeY += (targetY - item.gazeY) * .14;
       for (const pupil of item.pupils) {
-        pupil.style.transform = 'translate(calc(-50% + ' + (dx / distance * offset) +
-          'px), calc(-50% + ' + (dy / distance * offset) + 'px))';
+        pupil.style.transform = 'translate(calc(-50% + ' + item.gazeX.toFixed(2) +
+          'px), calc(-50% + ' + item.gazeY.toFixed(2) + 'px))';
       }
       item.wrap.style.filter = distance < 190 ?
         'drop-shadow(0 4px 2px #00000022)' : 'drop-shadow(0 3px 2px #00000014)';
