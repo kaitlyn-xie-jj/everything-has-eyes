@@ -1,6 +1,6 @@
 # Everything Has Eyes 👀
 
-A tiny, playful Chrome extension that turns webpage elements into expressive googly-eyed characters. The eyes follow your pointer.\n\n**New in v0.2:** oversized cartoon eyes and smiling character cards in the live demo. The same overlay scales down for ordinary websites.
+A tiny, playful Chrome extension that turns webpage elements into expressive googly-eyed characters. The eyes follow your pointer.\n\n**New:** oversized cartoon eyes, gentle independent blinking, and **shy mode**: move your pointer close to a face and its pupils softly glance away; move back and it looks at you again. The same overlay scales down for ordinary websites.
 
 ## Try it first
 
