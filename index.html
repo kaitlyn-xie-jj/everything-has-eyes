@@ -25,7 +25,8 @@
     .status { margin: 18px auto 0; font-size: 14px; min-height: 22px; }
     .gallery { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; align-items: stretch; }
     .tile { min-height: 290px; border: 3px solid var(--border); border-radius: 24px; padding: 26px 20px; text-align: center; box-shadow: 6px 6px 0 var(--border); }
-    .character-space { height: 137px; position: relative; }\n    .character-smile { position: absolute; top: 117px; left: calc(50% - 19px); width: 38px; height: 19px; border-bottom: 5px solid #29243c; border-radius: 0 0 50% 50%; }\n    .tile h2 { font-size: 17px; margin: 7px 0 8px; }
+    .character-space { height: 137px; position: relative; }
+    .character-smile { position: absolute; top: 117px; left: calc(50% - 19px); width: 38px; height: 19px; border-bottom: 5px solid #29243c; border-radius: 0 0 50% 50%; }\n    .tile h2 { font-size: 17px; margin: 7px 0 8px; }
     .tile p { line-height: 1.5; font-size: 14px; margin: 0 0 18px; }
     .tile.one { background: #e9dfff; } .tile.two { background: #fce8a8; } .tile.three { background: #b9e9ee; }
     .face-img { display: block; width: 104px; height: 104px; margin: 9px auto 20px; border-radius: 24px; }
@@ -78,7 +79,7 @@
     const status = document.getElementById('eyes-status');
     toggle.addEventListener('click', () => {
       const script = document.createElement('script');
-      script.src = 'eyes.js?v=2';
+      script.src = 'eyes.js?v=3';
       script.addEventListener('load', () => {
         script.remove();
         const active = Boolean(document.getElementById('tiny-eyes-overlay-v1'));
