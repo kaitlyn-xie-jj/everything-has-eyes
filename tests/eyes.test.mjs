@@ -13,9 +13,9 @@ function target(top=20,left=20,width=100,height=45){
   };
 }
 
-function fixture(targets){
+function fixture(targets, random = () => 0.25){
   const listeners=new Map(), frames=new Map(), cancelled=[];
-  let frameId=0;
+  let frameId=0, now=1000;
   function node(tag){
     return {
       tag,id:'',style:{},children:[],parent:null,isConnected:true,
@@ -38,14 +38,14 @@ function fixture(targets){
   };
   const window={};
   const context={
-    document,window,innerWidth:800,innerHeight:600,
+    document,window,innerWidth:800,innerHeight:600,\n    Date: { now: () => now }, Math: Object.assign(Object.create(Math), { random }),
     getComputedStyle:el=>el.computedStyle,
     requestAnimationFrame(fn){const id=++frameId;frames.set(id,fn);return id;},
     cancelAnimationFrame(id){cancelled.push(id);frames.delete(id);},
   };
   return {
     document,window,listeners,cancelled,
-    run:()=>runInNewContext(script,context),
+    run:()=>runInNewContext(script,context),\n    advance(ms){now+=ms;},
     animate(){const [id,fn]=[...frames].at(-1);frames.delete(id);fn();},
   };
 }
@@ -92,5 +92,23 @@ test('hides overlay for disconnected target',()=>{
   el.isConnected=false;
   f.animate();
   assert.equal(wrap.style.display,'none');
+  f.run();
+});
+
+test('characters blink independently and reopen their eyes', () => {
+  const values = [0, 0.9];
+  const f = fixture([target(), target(80)], () => values.shift() ?? 0.5);
+  f.run();
+  const overlay = f.document.getElementById('tiny-eyes-overlay-v1');
+  const firstEye = overlay.children[0].children[0];
+  const secondEye = overlay.children[1].children[0];
+  assert.equal(firstEye.style.transform, 'scaleY(1)');
+  f.advance(1201);
+  f.animate();
+  assert.equal(firstEye.style.transform, 'scaleY(0.09)');
+  assert.equal(secondEye.style.transform, 'scaleY(1)');
+  f.advance(170);
+  f.animate();
+  assert.equal(firstEye.style.transform, 'scaleY(1)');
   f.run();
 });
