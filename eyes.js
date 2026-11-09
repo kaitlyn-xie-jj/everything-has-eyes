@@ -63,7 +63,11 @@
     const a = makeEye(size), b = makeEye(size);
     wrap.append(a.outer, b.outer);
     overlay.appendChild(wrap);
-    items.push({ el, wrap, pupils: [a.pupil, b.pupil], size, big });
+    items.push({
+      el, wrap, pupils: [a.pupil, b.pupil], whites: [a.outer, b.outer],
+      size, big, nextBlink: Date.now() + 1200 + Math.random() * 4200,
+      blinkUntil: 0, blinking: false, doubleBlink: false
+    });
   }
 
   let mouseX = innerWidth / 2;
@@ -75,7 +79,22 @@
   };
 
   function animate() {
+    const now = Date.now();
     for (const item of items) {
+      // Each character blinks independently, occasionally twice in a row.
+      if (now >= item.nextBlink && !item.blinking) {
+        item.blinking = true;
+        item.blinkUntil = now + 165;
+        item.doubleBlink = Math.random() < 0.14;
+      }
+      if (item.blinking && now >= item.blinkUntil) {
+        item.blinking = false;
+        item.nextBlink = now + (item.doubleBlink ? 230 : 2200 + Math.random() * 4800);
+        item.doubleBlink = false;
+      }
+      for (const white of item.whites) {
+        white.style.transform = item.blinking ? 'scaleY(0.09)' : 'scaleY(1)';
+      }
       if (!item.el.isConnected) { item.wrap.style.display = 'none'; continue; }
       const r = item.el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) {
