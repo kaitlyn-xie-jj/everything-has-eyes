@@ -50,7 +50,7 @@
 
   for (const el of candidates) {
     const box = el.getBoundingClientRect();
-    const big = el.hasAttribute('data-eyes-target');
+    const big = typeof el.hasAttribute === 'function' && el.hasAttribute('data-eyes-target');
     const size = big ? Math.min(52, Math.max(32, box.width * .14)) :
       Math.min(32, Math.max(19, box.width * .13));
     const wrap = document.createElement('div');
