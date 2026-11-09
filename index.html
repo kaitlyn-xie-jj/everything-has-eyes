@@ -26,7 +26,8 @@
     .gallery { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; align-items: stretch; }
     .tile { min-height: 290px; border: 3px solid var(--border); border-radius: 24px; padding: 26px 20px; text-align: center; box-shadow: 6px 6px 0 var(--border); }
     .character-space { height: 137px; position: relative; }
-    .character-smile { position: absolute; top: 117px; left: calc(50% - 19px); width: 38px; height: 19px; border-bottom: 5px solid #29243c; border-radius: 0 0 50% 50%; }\n    .tile h2 { font-size: 17px; margin: 7px 0 8px; }
+    .character-smile { position: absolute; top: 117px; left: calc(50% - 19px); width: 38px; height: 19px; border-bottom: 5px solid #29243c; border-radius: 0 0 50% 50%; }
+    .tile h2 { font-size: 17px; margin: 7px 0 8px; }
     .tile p { line-height: 1.5; font-size: 14px; margin: 0 0 18px; }
     .tile.one { background: #e9dfff; } .tile.two { background: #fce8a8; } .tile.three { background: #b9e9ee; }
     .face-img { display: block; width: 104px; height: 104px; margin: 9px auto 20px; border-radius: 24px; }
@@ -49,13 +50,13 @@
         <h1>The internet is looking at you.</h1>
         <p>Give buttons, links, pictures and inputs a pair of googly eyes. Move your pointer. They're watching.</p>
         <button class="main-action" id="eyes-toggle" type="button" aria-pressed="false">Give everything eyes 👀</button>
-        <div class="status" id="eyes-status" role="status" aria-live="polite">Press the button to wake up the little characters.</div>
+        <div class="status" id="eyes-status" role="status" aria-live="polite">Wake them up, then move your pointer close to their faces.</div>
       </section>
       <section class="gallery" aria-label="Meet the googly-eyed characters">
         <article class="tile one" data-eyes-target>
           <div class="character-space"><div class="character-smile"></div></div>
           <h2>The shy card</h2>
-          <p>It follows your cursor everywhere.</p>
+          <p>Move closer and it'll look away shyly.</p>
         </article>
         <article class="tile two" data-eyes-target>
           <div class="character-space"><div class="character-smile"></div></div>
@@ -79,13 +80,13 @@
     const status = document.getElementById('eyes-status');
     toggle.addEventListener('click', () => {
       const script = document.createElement('script');
-      script.src = 'eyes.js?v=4';
+      script.src = 'eyes.js?v=5';
       script.addEventListener('load', () => {
         script.remove();
         const active = Boolean(document.getElementById('tiny-eyes-overlay-v1'));
         toggle.setAttribute('aria-pressed', String(active));
         toggle.textContent = active ? 'Take the eyes away 🙈' : 'Give everything eyes 👀';
-        status.textContent = active ? 'Meet your new googly-eyed friends! Move your mouse.' : 'All clear. Click again to bring them back.';
+        status.textContent = active ? 'Move close to a face — it gets shy and looks away!' : 'All clear. Click again to bring them back.';
       }, { once: true });
       script.addEventListener('error', () => {
         script.remove();
