@@ -123,3 +123,31 @@ test('characters blink independently, smoothly and reopen', () => {
   assert.equal(first.style.transform, 'scaleY(1.000)', 'eye reopens naturally');
   f.run();
 });
+
+test('shy gaze looks away gently when mouse enters personal space', () => {
+  const f = fixture([target()]);
+  f.run();
+  const pupil = f.document.getElementById('tiny-eyes-overlay-v1')
+    .children[0].children[0].children[0];
+  const position = () => {
+    const match = pupil.style.transform.match(/calc\(-50% \+ (-?[\d.]+)px\)/);
+    assert.ok(match, 'pupil has a numeric horizontal gaze offset');
+    return Number(match[1]);
+  };
+  const move = f.listeners.get('pointermove');
+  // First establish a rightward gaze from a safe distance.
+  move({ clientX: 700, clientY: 43 });
+  for (let i = 0; i < 30; i++) f.animate();
+  assert.ok(position() > 0, 'eyes look towards distant pointer');
+  // Approaching from the right causes a smooth glance to the left.
+  move({ clientX: 80, clientY: 43 });
+  f.animate();
+  assert.ok(position() > -3, 'shy glance is not an instantaneous snap');
+  for (let i = 0; i < 32; i++) f.animate();
+  assert.ok(position() < 0, 'eyes look away from a close pointer');
+  // As the pointer retreats, the normal following gaze returns.
+  move({ clientX: 700, clientY: 43 });
+  for (let i = 0; i < 35; i++) f.animate();
+  assert.ok(position() > 0, 'eyes resume following mouse when safe');
+  f.run();
+});
