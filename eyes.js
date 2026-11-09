@@ -85,7 +85,7 @@
       item.wrap.style.display = 'flex';
       const cx = Math.max(item.size, Math.min(innerWidth - item.size, r.left + r.width / 2));
       const cy = Math.max(item.size, Math.min(innerHeight - item.size,
-        r.top + (item.big ? Math.min(r.height * .40, 116) : Math.min(r.height * .30, 22))));
+        r.top + (item.big ? Math.min(r.height * .28, 84) : Math.min(r.height * .30, 22))));
       item.wrap.style.left = cx + 'px';
       item.wrap.style.top = cy + 'px';
       const dx = mouseX - cx, dy = mouseY - cy;
