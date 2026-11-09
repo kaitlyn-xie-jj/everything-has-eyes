@@ -46,7 +46,8 @@ function fixture(targets, random = () => 0.25){
   };
   return {
     document,window,listeners,cancelled,
-    run:()=>runInNewContext(script,context),\n    advance(ms){now+=ms;},
+    run:()=>runInNewContext(script,context),
+    advance(ms){now+=ms;},
     animate(){const [id,fn]=[...frames].at(-1);frames.delete(id);fn();},
   };
 }
@@ -96,20 +97,29 @@ test('hides overlay for disconnected target',()=>{
   f.run();
 });
 
-test('characters blink independently and reopen their eyes', () => {
+test('characters blink independently, smoothly and reopen', () => {
   const values = [0, 0.9];
   const f = fixture([target(), target(80)], () => values.shift() ?? 0.5);
   f.run();
   const overlay = f.document.getElementById('tiny-eyes-overlay-v1');
-  const firstEye = overlay.children[0].children[0];
-  const secondEye = overlay.children[1].children[0];
-  assert.equal(firstEye.style.transform, 'scaleY(1)');
-  f.advance(1201);
+  const first = overlay.children[0].children[0];
+  const second = overlay.children[1].children[0];
+  assert.equal(first.style.transform, 'scaleY(1.000)');
+  f.advance(3001);
   f.animate();
-  assert.equal(firstEye.style.transform, 'scaleY(0.09)');
-  assert.equal(secondEye.style.transform, 'scaleY(1)');
-  f.advance(170);
+  assert.equal(first.style.transform, 'scaleY(1.000)');
+  assert.equal(second.style.transform, 'scaleY(1.000)');
+  f.advance(75);
   f.animate();
-  assert.equal(firstEye.style.transform, 'scaleY(1)');
+  const midway = Number(first.style.transform.match(/scaleY\\(([^)]+)\\)/)[1]);
+  assert.ok(midway > 0.22 && midway < 1, 'eyelid is part-way closed');
+  assert.equal(second.style.transform, 'scaleY(1.000)', 'other character does not blink in sync');
+  f.advance(90);
+  f.animate();
+  const closed = Number(first.style.transform.match(/scaleY\\(([^)]+)\\)/)[1]);
+  assert.ok(closed <= midway, 'eyelid moves smoothly towards closing');
+  f.advance(220);
+  f.animate();
+  assert.equal(first.style.transform, 'scaleY(1.000)', 'eye reopens naturally');
   f.run();
 });
