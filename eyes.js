@@ -65,8 +65,8 @@
     overlay.appendChild(wrap);
     items.push({
       el, wrap, pupils: [a.pupil, b.pupil], whites: [a.outer, b.outer],
-      size, big, nextBlink: Date.now() + 1200 + Math.random() * 4200,
-      blinkUntil: 0, blinking: false, doubleBlink: false
+      size, big, nextBlink: Date.now() + 3000 + Math.random() * 5500,
+      blinkStart: -1, blinkDuration: 340
     });
   }
 
@@ -81,19 +81,26 @@
   function animate() {
     const now = Date.now();
     for (const item of items) {
-      // Each character blinks independently, occasionally twice in a row.
-      if (now >= item.nextBlink && !item.blinking) {
-        item.blinking = true;
-        item.blinkUntil = now + 165;
-        item.doubleBlink = Math.random() < 0.14;
+      // A soft close-and-open blink. Different characters keep their own rhythm.
+      if (now >= item.nextBlink && item.blinkStart < 0) {
+        item.blinkStart = now;
       }
-      if (item.blinking && now >= item.blinkUntil) {
-        item.blinking = false;
-        item.nextBlink = now + (item.doubleBlink ? 230 : 2200 + Math.random() * 4800);
-        item.doubleBlink = false;
+      let openness = 1;
+      if (item.blinkStart >= 0) {
+        const progress = Math.min(1, (now - item.blinkStart) / item.blinkDuration);
+        // Smooth at both ends. Slightly quicker to close than to open.
+        const closure = progress < 0.42
+          ? 0.5 - 0.5 * Math.cos(Math.PI * progress / 0.42)
+          : 0.5 + 0.5 * Math.cos(Math.PI * (progress - 0.42) / 0.58);
+        openness = 1 - 0.78 * closure;
+        if (progress >= 1) {
+          item.blinkStart = -1;
+          item.nextBlink = now + 4200 + Math.random() * 5500;
+          openness = 1;
+        }
       }
       for (const white of item.whites) {
-        white.style.transform = item.blinking ? 'scaleY(0.09)' : 'scaleY(1)';
+        white.style.transform = 'scaleY(' + openness.toFixed(3) + ')';
       }
       if (!item.el.isConnected) { item.wrap.style.display = 'none'; continue; }
       const r = item.el.getBoundingClientRect();
