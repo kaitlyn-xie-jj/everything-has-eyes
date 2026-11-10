@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Everything Has Eyes",
-  "version": "0.1.0",
-  "description": "Give every webpage curious googly eyes.",
+  "version": "0.2.0",
+  "description": "Playful googly eyes that blink, follow your pointer, and get shy.",
   "permissions": [
     "activeTab",
     "scripting"
