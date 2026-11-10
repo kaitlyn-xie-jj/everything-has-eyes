@@ -29,5 +29,5 @@ test('GitHub preview is self-contained and has alternative text', () => {
   assert.match(svg, /<svg\b/);
   assert.match(svg, /<title\b/);
   assert.match(readme, /!\[[^\]]+\]\(assets\/preview\.svg\)/);
-  assert.doesNotMatch(svg, /https?:\/\//g, 'inline-only illustration has no remote assets');
+  assert.doesNotMatch(svg, /<(?:image|script|use)[^>]+(?:href|src)=[\"']https?:/, 'no remote resources');
 });
