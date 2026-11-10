@@ -1,5 +1,7 @@
 # Everything Has Eyes 👀
 
+[![Tests](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/tests.yml/badge.svg)](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/tests.yml) [![Deploy demo](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/deploy-demo.yml/badge.svg)](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/deploy-demo.yml)
+
 **Make the internet feel a little more alive.** A tiny, playful, open-source Chrome extension that gives ordinary webpage elements expressive googly eyes.
 
 [**Try the interactive demo**](https://kaitlyn-xie-jj.github.io/everything-has-eyes/) · [**Installation guide**](#install) · [**Report a bug**](https://github.com/kaitlyn-xie-jj/everything-has-eyes/issues/new)
