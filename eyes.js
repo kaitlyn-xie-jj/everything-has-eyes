@@ -29,6 +29,11 @@
       style.visibility !== 'hidden' && style.display !== 'none';
   }).slice(0, 70);
 
+  const personalities = {
+    shy: { avoidance: 1, speed: .14, resting: 1, blink: 340, interval: 4200 },
+    curious: { avoidance: 0, speed: .20, resting: 1, blink: 300, interval: 4800 },
+    sleepy: { avoidance: .35, speed: .075, resting: .72, blink: 620, interval: 6500 }
+  };
   const items = [];
   function makeEye(size) {
     const outer = document.createElement('span');
@@ -54,6 +59,8 @@
   for (const el of candidates) {
     const box = el.getBoundingClientRect();
     const big = typeof el.hasAttribute === 'function' && el.hasAttribute('data-eyes-target');
+    const requested = el.getAttribute?.('data-eyes-personality');
+    const personality = Object.hasOwn(personalities, requested) ? personalities[requested] : personalities.shy;
     const size = big ? Math.min(52, Math.max(32, box.width * .14)) :
       Math.min(32, Math.max(19, box.width * .13));
     const wrap = document.createElement('div');
@@ -69,7 +76,7 @@
     items.push({
       el, wrap, pupils: [a.pupil, b.pupil], whites: [a.outer, b.outer],
       size, big, nextBlink: Date.now() + 3000 + Math.random() * 5500,
-      blinkStart: -1, blinkDuration: 340, gazeX: 0, gazeY: 0
+      blinkStart: -1, blinkDuration: personality.blink, gazeX: 0, gazeY: 0, personality
     });
   }
 
@@ -99,12 +106,12 @@
         openness = 1 - 0.78 * closure;
         if (progress >= 1) {
           item.blinkStart = -1;
-          item.nextBlink = now + 4200 + Math.random() * 5500;
+          item.nextBlink = now + item.personality.interval + Math.random() * 5500;
           openness = 1;
         }
       }
       for (const white of item.whites) {
-        white.style.transform = 'scaleY(' + openness.toFixed(3) + ')';
+        white.style.transform = 'scaleY(' + (openness * item.personality.resting).toFixed(3) + ')';
       }
       if (!item.el.isConnected) { item.wrap.style.display = 'none'; continue; }
       const r = item.el.getBoundingClientRect();
@@ -133,7 +140,7 @@
       const shyInner = item.big ? 65 : 38;
       const proximity = Math.max(0, Math.min(1,
         (shyRadius - distance) / (shyRadius - shyInner)));
-      const shy = proximity * proximity * (3 - 2 * proximity);
+      const shy = proximity * proximity * (3 - 2 * proximity) * item.personality.avoidance;
       const lookX = dx / distance * offset;
       const lookY = dy / distance * offset;
       const targetX = lookX * (1 - shy) - dx / distance * reach * .8 * shy;
@@ -141,8 +148,8 @@
         (-dy / distance * reach * .45 + reach * .2) * shy;
 
       // A damped glance gives shy eyes a soft, slightly hesitant motion.
-      item.gazeX += ((reducedMotion?.matches ? 0 : targetX) - item.gazeX) * .14;
-      item.gazeY += ((reducedMotion?.matches ? 0 : targetY) - item.gazeY) * .14;
+      item.gazeX += ((reducedMotion?.matches ? 0 : targetX) - item.gazeX) * item.personality.speed;
+      item.gazeY += ((reducedMotion?.matches ? 0 : targetY) - item.gazeY) * item.personality.speed;
       for (const pupil of item.pupils) {
         pupil.style.transform = 'translate(calc(-50% + ' + item.gazeX.toFixed(2) +
           'px), calc(-50% + ' + item.gazeY.toFixed(2) + 'px))';
