@@ -9,6 +9,8 @@
 
   const overlay = document.createElement('div');
   overlay.id = ID;
+  overlay.setAttribute?.('aria-hidden', 'true');
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   Object.assign(overlay.style, {
     position: 'fixed', inset: '0', pointerEvents: 'none', zIndex: '2147483647'
   });
@@ -83,7 +85,8 @@
     const now = Date.now();
     for (const item of items) {
       // A soft close-and-open blink. Different characters keep their own rhythm.
-      if (now >= item.nextBlink && item.blinkStart < 0) {
+      if (reducedMotion?.matches) item.blinkStart = -1;
+      if (!reducedMotion?.matches && now >= item.nextBlink && item.blinkStart < 0) {
         item.blinkStart = now;
       }
       let openness = 1;
@@ -105,7 +108,10 @@
       }
       if (!item.el.isConnected) { item.wrap.style.display = 'none'; continue; }
       const r = item.el.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) {
+      const style = getComputedStyle(item.el);
+      if (r.width < 35 || r.height < 18 || style.display === 'none' ||
+          style.visibility === 'hidden' || style.visibility === 'collapse' ||
+          r.bottom <= 0 || r.top >= innerHeight || r.right <= 0 || r.left >= innerWidth) {
         item.wrap.style.display = 'none';
         continue;
       }
@@ -135,8 +141,8 @@
         (-dy / distance * reach * .45 + reach * .2) * shy;
 
       // A damped glance gives shy eyes a soft, slightly hesitant motion.
-      item.gazeX += (targetX - item.gazeX) * .14;
-      item.gazeY += (targetY - item.gazeY) * .14;
+      item.gazeX += ((reducedMotion?.matches ? 0 : targetX) - item.gazeX) * .14;
+      item.gazeY += ((reducedMotion?.matches ? 0 : targetY) - item.gazeY) * .14;
       for (const pupil of item.pupils) {
         pupil.style.transform = 'translate(calc(-50% + ' + item.gazeX.toFixed(2) +
           'px), calc(-50% + ' + item.gazeY.toFixed(2) + 'px))';
