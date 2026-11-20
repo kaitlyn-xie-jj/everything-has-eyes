@@ -15,6 +15,7 @@
 - **Follow your pointer** — buttons, links, images, inputs and other common webpage controls look at you.
 - **Blink naturally** — independent, gentle blinks instead of synchronized jumps.
 - **Get shy** — move your pointer too close and the eyes softly look away; retreat and they look back.
+- **Respect reduced motion** — if your system requests reduced motion, the eyes stay still instead of tracking or blinking.
 - **Get out of your way** — eyes never intercept clicks or typing. Click the extension again to remove them.
 
 The demo deliberately gives three large cards oversized eyes to show the idea. On regular websites, the extension places smaller eyes on eligible elements and limits the initial selection to 70 visible elements.
@@ -64,7 +65,7 @@ npm run check
 npm test
 ```
 
-The automated suite covers eligible elements, pointer tracking, gentle independent blinking, shy gaze, toggling and cleanup, selection limits, the demo, and popup behaviour. [GitHub Actions](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/tests.yml) runs syntax and unit tests on pushes and pull requests.
+The automated suite covers eligible elements, pointer tracking, gentle independent blinking, shy gaze, toggling and cleanup, selection limits, changing target visibility, reduced motion, the demo, and popup behaviour. [GitHub Actions](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/tests.yml) runs syntax and unit tests on pushes and pull requests.
 
 **Scope of verification:** Unit tests use lightweight DOM fixtures. They are not a substitute for installing the extension and verifying browser-specific behavior. The [demo deployment workflow](https://github.com/kaitlyn-xie-jj/everything-has-eyes/actions/workflows/deploy-demo.yml) publishes `index.html` and `eyes.js` to GitHub Pages.
 
