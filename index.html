@@ -53,21 +53,21 @@
         <div class="status" id="eyes-status" role="status" aria-live="polite">Wake them up, then move your pointer close to their faces.</div>
       </section>
       <section class="gallery" aria-label="Meet the googly-eyed characters">
-        <article class="tile one" data-eyes-target>
+        <article class="tile one" data-eyes-target data-eyes-personality="shy">
           <div class="character-space"><div class="character-smile"></div></div>
           <h2>The shy card</h2>
           <p>Move closer and it'll look away shyly.</p>
         </article>
-        <article class="tile two" data-eyes-target>
+        <article class="tile two" data-eyes-target data-eyes-personality="curious">
           <div class="character-space"><div class="character-smile"></div></div>
           <h2>The curious button</h2>
-          <p>It is looking right at you.</p>
+          <p>It is curious, even when you get close.</p>
           <button class="sample-button" type="button" id="ordinary-button">Boop me!</button>
         </article>
-        <article class="tile three" data-eyes-target>
+        <article class="tile three" data-eyes-target data-eyes-personality="sleepy">
           <div class="character-space"><div class="character-smile"></div></div>
-          <h2>The secret keeper</h2>
-          <p>It knows what you typed.</p>
+          <h2>The sleepy friend</h2>
+          <p>Half awake, but happy to see you.</p>
           <input class="sample-input" type="text" aria-label="Test input" placeholder="Say hi...">
         </article>
       </section>
@@ -80,13 +80,13 @@
     const status = document.getElementById('eyes-status');
     toggle.addEventListener('click', () => {
       const script = document.createElement('script');
-      script.src = 'eyes.js?v=5';
+      script.src = 'eyes.js?v=6';
       script.addEventListener('load', () => {
         script.remove();
         const active = Boolean(document.getElementById('tiny-eyes-overlay-v1'));
         toggle.setAttribute('aria-pressed', String(active));
         toggle.textContent = active ? 'Take the eyes away 🙈' : 'Give everything eyes 👀';
-        status.textContent = active ? 'Move close to a face — it gets shy and looks away!' : 'All clear. Click again to bring them back.';
+        status.textContent = active ? 'Meet the shy, curious and sleepy friends. Try moving close!' : 'All clear. Click again to bring them back.';
       }, { once: true });
       script.addEventListener('error', () => {
         script.remove();
