@@ -18,7 +18,7 @@
 - **Respect reduced motion** — if your system requests reduced motion, the eyes stay still instead of tracking or blinking.
 - **Get out of your way** — eyes never intercept clicks or typing. Click the extension again to remove them.
 
-The demo deliberately gives three large cards oversized eyes to show the idea. On regular websites, the extension places smaller eyes on eligible elements and limits the initial selection to 70 visible elements.
+The demo deliberately gives three large cards oversized eyes and distinct personalities: **shy** (gently avoids close pointers), **curious** (keeps looking at them), and **sleepy** (lowered eyelids and slower glances). Regular webpages retain the original shy behavior. On regular websites, the extension places smaller eyes on eligible elements and limits the initial selection to 70 visible elements.
 
 ## Try it first
 
