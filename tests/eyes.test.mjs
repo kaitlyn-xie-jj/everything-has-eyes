@@ -179,3 +179,30 @@ test('reduced motion preference disables tracking and blinking', () => {
   assert.equal(eye.children[0].style.transform, initial);
   f.run();
 });
+
+test('curious eyes keep looking at nearby pointers while shy eyes look away', () => {
+  const shy = target(), curious = target(20, 300);
+  curious.getAttribute = name => name === 'data-eyes-personality' ? 'curious' : null;
+  const f = fixture([shy, curious]);
+  f.run();
+  const eyes = f.document.getElementById('tiny-eyes-overlay-v1').children;
+  const horizontal = eye => Number(eye.children[0].children[0].style.transform.split(' + ')[1].split('px')[0]);
+  const move = f.listeners.get('pointermove');
+  move({ clientX: 80, clientY: 33.5 });
+  for (let i = 0; i < 40; i++) f.animate();
+  assert.ok(horizontal(eyes[0]) < 0);
+  move({ clientX: 360, clientY: 33.5 });
+  for (let i = 0; i < 40; i++) f.animate();
+  assert.ok(horizontal(eyes[1]) > 0);
+  f.run();
+});
+
+test('sleepy character has gently lowered eyelids at rest', () => {
+  const sleepy = target();
+  sleepy.getAttribute = name => name === 'data-eyes-personality' ? 'sleepy' : null;
+  const f = fixture([sleepy]);
+  f.run();
+  const eye = f.document.getElementById('tiny-eyes-overlay-v1').children[0].children[0];
+  assert.equal(eye.style.transform, 'scaleY(0.720)');
+  f.run();
+});
