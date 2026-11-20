@@ -13,7 +13,7 @@ function target(top=20,left=20,width=100,height=45){
   };
 }
 
-function fixture(targets, random = () => 0.25){
+function fixture(targets, random = () => 0.25, reduced = false){
   const listeners=new Map(), frames=new Map(), cancelled=[];
   let frameId=0, now=1000;
   function node(tag){
@@ -36,7 +36,7 @@ function fixture(targets, random = () => 0.25){
     addEventListener:(type,fn)=>listeners.set(type,fn),
     removeEventListener:(type,fn)=>{if(listeners.get(type)===fn)listeners.delete(type);},
   };
-  const window={};
+  const window={matchMedia: () => ({matches: reduced})};
   const context={
     document,window,innerWidth:800,innerHeight:600,
     Date: { now: () => now }, Math: Object.assign(Object.create(Math), { random }),
@@ -149,5 +149,33 @@ test('shy gaze looks away gently when mouse enters personal space', () => {
   move({ clientX: 700, clientY: 43 });
   for (let i = 0; i < 35; i++) f.animate();
   assert.ok(position() > 0, 'eyes resume following mouse when safe');
+  f.run();
+});
+
+test('eyes hide when an element becomes invisible and return when visible again', () => {
+  const el = target(), f = fixture([el]);
+  f.run();
+  const wrap = f.document.getElementById('tiny-eyes-overlay-v1').children[0];
+  el.computedStyle.visibility = 'hidden';
+  f.animate();
+  assert.equal(wrap.style.display, 'none');
+  el.computedStyle.visibility = 'visible';
+  f.animate();
+  assert.equal(wrap.style.display, 'flex');
+  f.run();
+});
+
+test('reduced motion preference disables tracking and blinking', () => {
+  const f = fixture([target()], () => 0, true);
+  f.run();
+  const eye = f.document.getElementById('tiny-eyes-overlay-v1').children[0].children[0];
+  const initial = eye.children[0].style.transform;
+  f.listeners.get('pointermove')({clientX: 700, clientY: 500});
+  f.advance(4000);
+  f.animate();
+  f.advance(140);
+  f.animate();
+  assert.equal(eye.style.transform, 'scaleY(1.000)');
+  assert.equal(eye.children[0].style.transform, initial);
   f.run();
 });
