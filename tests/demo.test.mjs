@@ -9,9 +9,12 @@ test('demo is standalone, accessible, and loads the existing overlay', () => {
   assert.match(html, /<title>Everything Has Eyes/);
   assert.match(html, /id="eyes-toggle"[^>]*aria-pressed="false"/);
   assert.match(html, /id="eyes-status"[^>]*role="status"[^>]*aria-live="polite"/);
-  assert.match(html, /script\.src = 'eyes\.js\?v=5';/);
+  assert.match(html, /script\.src = 'eyes\.js\?v=6';/);
   assert.match(html, /tiny-eyes-overlay-v1/);
   assert.match(html, /data-eyes-target/);
+  for (const personality of ['shy', 'curious', 'sleepy']) {
+    assert.ok(html.includes('data-eyes-personality="' + personality + '"'));
+  }
   assert.match(html, /type="text" aria-label="Test input"/);
   assert.doesNotMatch(html, /<script[^>]*src="https?:/);
 });
